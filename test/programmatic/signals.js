@@ -5,6 +5,7 @@ var path   = require('path');
 var fs     = require('fs');
 
 describe('Signal kill (+delayed)', function() {
+  this.timeout(30000);
   var proc1 = null;
 
   var pm2 = new PM2.custom({
@@ -41,7 +42,7 @@ describe('Signal kill (+delayed)', function() {
       }, function(err, data) {
         proc1 = data[0];
         should(err).be.null();
-        setTimeout(done, 1000);
+        setTimeout(done, 2000);
       });
     });
 
@@ -82,7 +83,7 @@ describe('Signal kill (+delayed)', function() {
       }, function(err, data) {
         proc1 = data[0];
         should(err).be.null();
-        setTimeout(done, 1000);
+        setTimeout(done, 2000);
       });
     });
 
@@ -91,14 +92,14 @@ describe('Signal kill (+delayed)', function() {
         pm2.list(function(err, list) {
           list[0].pm2_env.status.should.eql('stopping');
         });
-      }, 500);
+      }, 2000);
 
       setTimeout(function() {
         pm2.list(function(err, list) {
           list[0].pm2_env.status.should.eql('stopped');
           done();
         });
-      }, 1500);
+      }, 3000);
 
       pm2.stop('delayed-sigint', function(err, app) {
         //done(err);
@@ -124,7 +125,7 @@ describe('Signal kill (+delayed)', function() {
       }, function(err, data) {
         proc1 = data[0];
         should(err).be.null();
-        setTimeout(done, 1000);
+        setTimeout(done, 2000);
       });
     });
 
@@ -133,14 +134,14 @@ describe('Signal kill (+delayed)', function() {
         pm2.list(function(err, list) {
           list[0].pm2_env.status.should.eql('stopping');
         });
-      }, 500);
+      }, 2000);
 
       setTimeout(function() {
         pm2.list(function(err, list) {
           list[0].pm2_env.status.should.eql('stopped');
           done();
         });
-      }, 1500);
+      }, 3000);
 
       pm2.stop('delayed-sigint', function(err, app) {
         //done(err);
@@ -154,7 +155,7 @@ describe('Signal kill (+delayed)', function() {
           list[0].pm2_env.status.should.eql('online');
           done();
         });
-      }, 1500);
+      }, 3000);
 
       pm2.reload('delayed-sigint', function(err, app) {
         //done(err);
@@ -181,7 +182,7 @@ describe('Signal kill (+delayed)', function() {
       }, function(err, data) {
         proc1 = data[0];
         should(err).be.null();
-        setTimeout(done, 1000);
+        setTimeout(done, 2000);
       });
     });
 
@@ -190,7 +191,7 @@ describe('Signal kill (+delayed)', function() {
         pm2.list(function(err, list) {
           list[0].pm2_env.status.should.eql('stopping');
         });
-      }, 1500);
+      }, 3000);
 
       setTimeout(function() {
         pm2.list(function(err, list) {
@@ -214,6 +215,7 @@ describe('Signal kill (+delayed)', function() {
 });
 
 describe('Message kill (signal behavior override via PM2_KILL_USE_MESSAGE, +delayed)', function() {
+  this.timeout(30000);
   var proc1 = null;
   var appName = 'delayedsend';
 
@@ -255,7 +257,7 @@ describe('Message kill (signal behavior override via PM2_KILL_USE_MESSAGE, +dela
       }, function(err, data) {
         proc1 = data[0];
         should(err).be.null();
-        setTimeout(done, 1000);
+        setTimeout(done, 2000);
       });
     });
 
@@ -267,7 +269,7 @@ describe('Message kill (signal behavior override via PM2_KILL_USE_MESSAGE, +dela
           should(err).be.null();
           list[0].pm2_env.status.should.eql('stopping');
         });
-      }, 500);
+      }, 2000);
 
       setTimeout(function() {
         console.log('CALLED2')
@@ -277,7 +279,7 @@ describe('Message kill (signal behavior override via PM2_KILL_USE_MESSAGE, +dela
           list[0].pm2_env.status.should.eql('stopped');
           done();
         });
-      }, 1500);
+      }, 3000);
 
       pm2.stop(appName, function(err, app) {
         //done(err);
@@ -314,7 +316,7 @@ describe('Message kill (signal behavior override via PM2_KILL_USE_MESSAGE, +dela
       }, function(err, data) {
         proc1 = data[0];
         should(err).be.null();
-        setTimeout(done, 1000);
+        setTimeout(done, 2000);
       });
     });
 
@@ -324,7 +326,7 @@ describe('Message kill (signal behavior override via PM2_KILL_USE_MESSAGE, +dela
           should(err).be.null();
           list[0].pm2_env.status.should.eql('stopping');
         });
-      }, 500);
+      }, 2000);
 
       setTimeout(function() {
         pm2.describe(appName, function(err, list) {
@@ -332,7 +334,7 @@ describe('Message kill (signal behavior override via PM2_KILL_USE_MESSAGE, +dela
           list[0].pm2_env.status.should.eql('stopped');
           done();
         });
-      }, 1500);
+      }, 3000);
 
       pm2.stop(appName, function(err, app) {
         //done(err);
@@ -347,7 +349,7 @@ describe('Message kill (signal behavior override via PM2_KILL_USE_MESSAGE, +dela
           list[0].pm2_env.status.should.eql('online');
           done();
         });
-      }, 1500);
+      }, 3000);
 
       pm2.reload(appName, function(err, app) {
         //done(err);

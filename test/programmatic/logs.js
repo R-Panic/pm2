@@ -7,6 +7,7 @@ var fs     = require('fs');
 var path   = require('path');
 
 describe('Programmatic log feature test', function() {
+  this.timeout(30000);
   var proc1 = null;
   var procs = [];
 

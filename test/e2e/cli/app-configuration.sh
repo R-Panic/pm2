@@ -61,10 +61,10 @@ exists 'probe Event Loop Latency exist' "Event Loop Latency p95"
 
 # Set new value for alert probe
 # $pm2 set probe-test.probes.Event\ Loop\ Latency.value 25
-# sleep 1
+# sleep 2
 
 # exists 'probe Event Loop Latency alerted' "alert: { cmp: '>', value: 25, mode: 'threshold'"
 
 # Override value for test-probe
 # $pm2 set probe-test.probes.test-probe.value 30
-# sleep 1
+# sleep 2
