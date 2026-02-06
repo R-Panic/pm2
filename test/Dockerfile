@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     gnupg \
     unzip \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # Always install Node.js (required for PM2 daemon and tests)
