@@ -9,8 +9,8 @@ echo "################## Wrapped fork ###################"
 
 echo "Testing wrapped fork mode values"
 
-rm path-check1.txt
-rm path-check2.txt
+rm -f path-check1.txt
+rm -f path-check2.txt
 
 if command -v bun >/dev/null 2>&1
 then
