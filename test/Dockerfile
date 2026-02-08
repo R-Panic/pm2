@@ -24,31 +24,39 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Always install Node.js (required for PM2 daemon and tests)
-RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_VERSION}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
-    apt-get update && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
+# Install Node.js when RUNTIME=node
+RUN if [ "$RUNTIME" = "node" ]; then \
+        mkdir -p /etc/apt/keyrings && \
+        curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+        echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_VERSION}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
+        apt-get update && \
+        apt-get install -y nodejs && \
+        rm -rf /var/lib/apt/lists/*; \
+    fi
 
-# Additionally install Bun if RUNTIME=bun
+# Install Bun when RUNTIME=bun
 RUN if [ "$RUNTIME" = "bun" ]; then \
         curl -fsSL https://bun.sh/install | bash && \
         ln -s /root/.bun/bin/bun /usr/local/bin/bun && \
         ln -s /root/.bun/bin/bunx /usr/local/bin/bunx; \
     fi
 
-# Install mocha globally
-RUN npm install -g mocha
+# Install mocha globally (only needed for Node runtime)
+RUN if [ "$RUNTIME" = "node" ]; then \
+        npm install -g mocha; \
+    fi
 
 WORKDIR /var/pm2
 
 # Copy package files first (for layer caching)
 COPY package*.json ./
 
-# Install dependencies (always use npm for consistency)
-RUN npm install
+# Install dependencies
+RUN if [ "$RUNTIME" = "bun" ]; then \
+        bun install; \
+    else \
+        npm install; \
+    fi
 
 # Environment
 ENV PM2_DISCRETE_MODE=true

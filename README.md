@@ -38,7 +38,7 @@ PM2 is constantly assailed by [more than 1800 tests](https://github.com/Unitech/
 
 Official website: [https://pm2.keymetrics.io/](https://pm2.keymetrics.io/)
 
-Works on Linux (stable) & macOS (stable) & Windows (stable). All Node.js versions are supported starting Node.js 12.X and Bun since v1
+Works on Linux (stable) & macOS (stable) & Windows (stable). All Node.js versions are supported starting Node.js 20.X and Bun since v1
 
 
 ## Installing PM2
@@ -54,7 +54,10 @@ $ npm install pm2 -g
 ```bash
 $ bun install pm2 -g
 ```
-**Please note that you might need to symlink node to bun if you only want to use bun via `sudo ln -s /home/$USER/.bun/bin/bun /usr/bin/node`**
+**If Node.js is not installed**, PM2 binaries use `#!/usr/bin/env node` as shebang, so you need to symlink `node` to `bun`:
+```bash
+$ sudo ln -s $(which bun) /usr/local/bin/node
+```
 
 ___
 

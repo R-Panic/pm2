@@ -214,6 +214,15 @@ echo "[*] Found $TOTAL tests, running with $MAX_JOBS parallel jobs"
 [[ $SKIPPED -gt 0 ]] && echo "[*] Skipped $SKIPPED tests (require host features)"
 echo ""
 
+# Runtime commands (bunx mocha for Bun, mocha for Node)
+if [[ "$RUNTIME" == "bun" ]]; then
+    MOCHA="bunx mocha"
+    JSRUN="bun"
+else
+    MOCHA="mocha"
+    JSRUN="node"
+fi
+
 # Run a single test in a container (with isolated codebase copy)
 run_test() {
     local test_spec=$1
@@ -235,20 +244,20 @@ run_test() {
         cat "$CODEBASE_TAR" | docker run --rm -i \
             --mount type=tmpfs,destination=/root/.pm2 \
             "$IMAGE_NAME" \
-            bash -c "tar -xf - && mocha --exit --timeout 10000 --bail $test_path" \
+            bash -c "tar -xf - && $MOCHA --exit --timeout 10000 --bail $test_path" \
             > "$log_file" 2>&1
     elif [[ "$test_type" == "axon" ]]; then
-        # Axon: custom runner (runs test file with node directly)
+        # Axon: custom runner (runs test file directly)
         cat "$CODEBASE_TAR" | docker run --rm -i \
             "$IMAGE_NAME" \
-            bash -c "tar -xf - && node $test_path" \
+            bash -c "tar -xf - && $JSRUN $test_path" \
             > "$log_file" 2>&1
     elif [[ "$test_type" == "io-agent" ]] || [[ "$test_type" == "axon-rpc" ]]; then
         # IO Agent / Axon-RPC: mocha with spec reporter
         cat "$CODEBASE_TAR" | docker run --rm -i \
             --mount type=tmpfs,destination=/root/.pm2 \
             "$IMAGE_NAME" \
-            bash -c "tar -xf - && mocha --reporter spec --exit --bail $test_path" \
+            bash -c "tar -xf - && $MOCHA --reporter spec --exit --bail $test_path" \
             > "$log_file" 2>&1
     else
         # Unit: extract codebase, run with mocha
@@ -256,7 +265,7 @@ run_test() {
         cat "$CODEBASE_TAR" | docker run --rm -i \
             --mount type=tmpfs,destination=/root/.pm2 \
             "$IMAGE_NAME" \
-            bash -c "tar -xf - && mocha --exit --bail $test_path" \
+            bash -c "tar -xf - && $MOCHA --exit --bail $test_path" \
             > "$log_file" 2>&1
     fi
 }
